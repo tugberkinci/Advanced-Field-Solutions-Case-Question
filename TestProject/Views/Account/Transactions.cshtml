@@ -1,0 +1,146 @@
+﻿@using TestProject.Services
+@model TestProject.Entities.UserToken
+
+@{
+    ViewBag.Title = "Transactions";
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Advanced Field Solutions Case Question</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/TestProject.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            
+                            <h5><a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Index">Home</a></h5>
+                        </li>
+                       
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Translator">Translator</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Transactions">Transactions</a>
+                        </li> 
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Users">Users</a>
+                        </li>
+
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="margin: auto">@Utils.CurrentUser().UserMail</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item">@Html.ActionLink("Logout","Index","Home")</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+ <div class="text-center">  
+<h2>Transactions</h2>
+<br/>
+<div style="width:90%; margin:0 auto;">
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>userId</th>
+                <th>input</th>
+                <th>output</th>
+       
+            </tr>
+        </thead>
+    </table>
+</div>
+</div>
+ 
+
+
+</body>
+</html>
+
+
+<link href="//cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css" rel="stylesheet" />
+@section Scripts{
+   
+    <script src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+    <script>
+
+         var token = '@Model.Token';
+         var secret = '@Model.Secret'; 
+
+        $(document).ready(function () {
+
+            
+            $("#myTable").DataTable({
+                "processing": true,
+                "serverSide": false, 
+                "filter": true, 
+                "orderMulti": false, 
+                "order": [[1, 'desc']], 
+                "ajax": {
+                    "url": "/Transaction",
+                    "type": "GET",
+                    "datatype": "json",
+                    "async": false,
+                    "headers": {
+                    "Authorization": "Basic " + btoa(token + ":" + secret)
+                    },
+                    
+                },
+                "columnDefs":  
+                [{  
+                    "targets": [0],  
+                    "visible": true,  
+                    "searchable": true  
+
+                },  
+                {  
+                    "targets": [1],  
+                    "searchable": false,  
+                    "orderable": true  
+                },  
+                {  
+                    "targets": [2],  
+                    "searchable": true,  
+                    "orderable": true  
+                },  
+                {  
+                    "targets": [3],  
+                    "searchable": true,  
+                    "orderable": true  
+                }],  
+                "columns": [
+                        { "data": "id", "name": "id", "autoWidth": true },
+                        { "data": "userId", "name": "userId", "autoWidth": true },
+                        { "data": "input", "name": "input", "autoWidth": true },
+                        { "data": "output", "name": "output", "autoWidth": true },
+                      
+       
+                ]
+            });
+        });
+    </script>
+}
+ 

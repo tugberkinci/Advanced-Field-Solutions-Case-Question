@@ -1,0 +1,144 @@
+﻿@using TestProject.Services
+
+@model TestProject.Models.TranslateModel
+@{
+    ViewData["Title"] = "Translator";
+    
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Advanced Field Solutions Case Question</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/TestProject.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            
+                           <h5><a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Index">Home</a></h5>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Translator">Translator</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Transactions">Transactions</a>
+                        </li> 
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Users">Users</a>
+                        </li>
+
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="margin: auto">@Utils.CurrentUser().UserMail</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item">@Html.ActionLink("Logout","Index","Home")</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+    <div class="text-center">
+         <h2>Shakespeare Translator</h2>
+         <br/>
+
+        @Html.AntiForgeryToken()
+       @* @using (Html.BeginForm("Trannslator","Account",FormMethod.Post))
+        {
+            @Html.TextAreaFor(m => m.Input,new {id="inputArea", rows= 10, cols= 100 })*@
+        <textarea name="message" rows="10" cols="100" id="inputArea">The cat was playing in the garden.</textarea>
+        <br/><br/>
+    
+        <input type="button" id="btnGet" value="Translate me" class="btn btn-primary" />
+
+        <br/><br/>
+
+            @*@Html.TextAreaFor(m => m.Output,new {id="resultArea", rows= 10, cols= 100 , })*@
+        <textarea name="message" rows="10" cols="100" id="resultArea"> Wait for translate..</textarea>
+
+        }
+        <br/><br/>
+        <br/><br/>
+        <br/><br/>
+      
+    </div>
+
+
+</body>
+</html>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript">
+        
+        var token = '@Model.Token';
+        var secret = '@Model.Secret' ;
+        //var secret ;
+
+        var jsonData = '{"success": {"total": 1},"contents": {"translated": "Thee did giveth mr. Tim a hearty meal,  but unfortunately what he did doth englut did maketh him kicketh the bucket.","text": "You gave Mr. Tim a hearty meal, but unfortunately what he ate made him die.","translation": "shakespeare"}}';
+              
+        $(function () {
+            $("#btnGet").click(function () {
+          
+                var textForTranslate = $("#inputArea").val();
+                //alert(token+secret);
+                $.ajax({
+                       type: "GET",
+                       url: "/Translate?input=".concat(textForTranslate),
+                       headers: {
+                        "Authorization": "Basic " + btoa(token+ ":" + secret)
+                        },
+                       success: function (response) {
+                            //$('#lblName').html(textForTranslate);
+                            //$('#lbl').text(JSON.stringify(response.contents));
+
+                            var testErr = JSON.parse(response) ;
+                          
+                            if(!testErr.hasOwnProperty('error'))
+                            {
+                                $('#resultArea').html(testErr.contents.translated);
+                                //@Model.Input = testErr.contents.translated;
+                            }
+                            else
+                            {
+                                $('#resultArea').html(testErr.error.message);
+                                //@Model.Output = testErr.error.message;
+                            }
+                                
+                            
+                                //@Model.Input = textForTranslate;
+                                 
+                            alert(JSON.stringify(response));
+                            
+                            //alert(JSON.parse(jsonData).contents.translated);
+
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        }
+                });
+            });
+        });
+    </script>
+
