@@ -9,11 +9,12 @@ namespace TestProject.Services
 
         public object SendEmail(string to, string subject, string body)
         {
+            //smtp client settings
             var smtpClient = new SmtpClient("smtp.yandex.com", 587);
            
             smtpClient.UseDefaultCredentials = false;
             smtpClient.Credentials = new System.Net.NetworkCredential(
-                "test.reset@yandex.com", "718146624rti."
+                "your_mail_address", "your mail password"
             );
             smtpClient.EnableSsl = true;
             smtpClient.Timeout = 5000;
@@ -22,7 +23,7 @@ namespace TestProject.Services
             {
                 MailMessage mailMessage = new MailMessage();
 
-                mailMessage.From = new MailAddress("test.reset@yandex.com" ,"User Token Service");
+                mailMessage.From = new MailAddress("your_mail_address" ,"User Token Service");
 
                 mailMessage.Subject = subject;
                 mailMessage.Body = body;
